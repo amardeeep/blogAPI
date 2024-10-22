@@ -55,4 +55,14 @@ postsRouter.delete(
     res.send("Post Deleted");
   })
 );
+//update a post
+postsRouter.put(
+  "/:postid",
+  asyncHandler(async (req, res) => {
+    const { updated_title, updated_content } = req.body;
+    const postid = parseInt(req.params.postid);
+    await queries.updatePost(postid, updated_content, updated_title);
+    res.send("Post Updated");
+  })
+);
 module.exports = { postsRouter };

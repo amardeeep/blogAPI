@@ -86,6 +86,21 @@ const deletePost = async (postid) => {
     console.error(error);
   }
 };
+const updatePost = async (postid, updated_content, updated_title) => {
+  try {
+    await prisma.post.update({
+      where: {
+        id: postid,
+      },
+      data: {
+        content: updated_content,
+        title: updated_title,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 //for development only
 const getAllComments = async () => {
   try {
@@ -95,7 +110,21 @@ const getAllComments = async () => {
     console.error(error);
   }
 };
-
+//updatecomment
+const updateComment = async (commentid, updated_content) => {
+  try {
+    await prisma.comment.update({
+      where: {
+        id: commentid,
+      },
+      data: {
+        content: updated_content,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 module.exports = {
   postPosts,
   getPosts,
@@ -106,4 +135,6 @@ module.exports = {
   deleteComment,
   deletePost,
   getAllComments,
+  updatePost,
+  updateComment,
 };
