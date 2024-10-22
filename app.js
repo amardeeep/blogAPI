@@ -15,8 +15,7 @@ app.post(
   "/posts",
   asyncHandler(async (req, res) => {
     const { title, content } = req.body;
-    const post = await queries.postPosts(title, content);
-    console.log(post);
+    await queries.postPosts(title, content);
     res.send("Post was Created");
   })
 );
@@ -25,10 +24,8 @@ app.post(
   "/comments",
   asyncHandler(async (req, res) => {
     const { content, postid } = req.body;
-    console.log(req.body);
     const postId = parseInt(postid);
-    const comment = await queries.postComment(content, postId);
-    console.log(comment);
+    await queries.postComment(content, postId);
     res.send("Comment was Created");
   })
 );
@@ -65,6 +62,32 @@ app.get(
     const commentid = parseInt(req.params.commentid);
     const comment = await queries.getComment(commentid);
     res.send(comment);
+  })
+);
+//delete a comment
+app.delete(
+  "/comments/:commentid",
+  asyncHandler(async (req, res) => {
+    const commentid = parseInt(req.params.commentid);
+    await queries.deleteComment(commentid);
+    res.send("Comment Deleted");
+  })
+);
+//delete a post and associated comments
+app.delete(
+  "/posts/:postid",
+  asyncHandler(async (req, res) => {
+    const postid = parseInt(req.params.postid);
+    await queries.deletePost(postid);
+    res.send("Post Deleted");
+  })
+);
+//for development only get all comments
+app.get(
+  "/comments",
+  asyncHandler(async (req, res) => {
+    const comments = await queries.getAllComments();
+    res.send(comments);
   })
 );
 app.listen(PORT, () => {

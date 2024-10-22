@@ -66,6 +66,36 @@ const getComment = async (commentid) => {
     console.error(error);
   }
 };
+const deleteComment = async (commentid) => {
+  try {
+    await prisma.comment.delete({
+      where: {
+        id: commentid,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+const deletePost = async (postid) => {
+  try {
+    await prisma.post.delete({
+      where: { id: postid },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+//for development only
+const getAllComments = async () => {
+  try {
+    const comments = await prisma.comment.findMany();
+    return comments;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 module.exports = {
   postPosts,
   getPosts,
@@ -73,4 +103,7 @@ module.exports = {
   postComment,
   getComments,
   getComment,
+  deleteComment,
+  deletePost,
+  getAllComments,
 };
