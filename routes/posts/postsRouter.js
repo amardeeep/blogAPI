@@ -28,6 +28,24 @@ postsRouter.get(
     res.send(post);
   })
 );
+//get all comments of a post
+postsRouter.get(
+  "/:postid/comments",
+  asyncHandler(async (req, res) => {
+    const postId = parseInt(req.params.postid);
+    const comments = await queries.getComments(postId);
+    res.send(comments);
+  })
+);
+//get a single comment of a post
+postsRouter.get(
+  "/:postid/comments/:commentid",
+  asyncHandler(async (req, res) => {
+    const commentid = parseInt(req.params.commentid);
+    const comment = await queries.getComment(commentid);
+    res.send(comment);
+  })
+);
 //delete a post and associated comments
 postsRouter.delete(
   "/:postid",
