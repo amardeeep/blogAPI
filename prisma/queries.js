@@ -125,6 +125,35 @@ const updateComment = async (commentid, updated_content) => {
     console.error(error);
   }
 };
+//createUser
+const createUser = async (username, email, password) => {
+  try {
+    await prisma.user.create({
+      data: {
+        username,
+        email,
+        password,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+//getUser
+const getUser = async (username) => {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        username,
+      },
+    });
+    console.log(user);
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 module.exports = {
   postPosts,
   getPosts,
@@ -137,4 +166,6 @@ module.exports = {
   getAllComments,
   updatePost,
   updateComment,
+  createUser,
+  getUser,
 };
