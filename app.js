@@ -13,12 +13,17 @@ app.use(express.urlencoded({ extended: false }));
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const SECRET_KEY = process.env.SECRET_KEY;
+const jwt = require("jsonwebtoken");
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       const user = await queries.getUser(username);
-      if (!user || user.password != password) {
-        return done(null, false, { message: "Incorrect Username or Password" });
+      console.log(user);
+      if (!user) {
+        return done(null, false, { message: "Incorrect Credentials" });
+      }
+      if (user.password != password) {
+        return done(null, false, { message: "Incorrect Credentials" });
       }
       return done(null, user);
     } catch (error) {
@@ -31,7 +36,12 @@ app.post("/login", async (req, res) => {
     if (err) {
       res.status(400).json({ message: "Error loggin you in", user });
     }
-    res.send(user);
+    if (!user) {
+      res.status(500).json({ message: "Unauthorized" });
+    } else {
+      const token = jwt.sign(user, SECRET_KEY);
+      res.json(token);
+    }
   })(req, res);
 });
 //
