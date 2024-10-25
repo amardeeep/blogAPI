@@ -14,11 +14,26 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const SECRET_KEY = process.env.SECRET_KEY;
 const jwt = require("jsonwebtoken");
+const JWTStrategy = require("passport-jwt").Strategy;
+const ExtractJWT = require("passport-jwt").ExtractJwt;
+const opts = {};
+opts.jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = SECRET_KEY;
+passport.use(
+  new JWTStrategy(opts, async (jwt_payload, done) => {
+    console.log(jwt_payload);
+    const user = await queries.getUser(jwt_payload.username);
+    if (user) {
+      return done(null, true);
+    } else {
+      return done(null, false);
+    }
+  })
+);
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       const user = await queries.getUser(username);
-      console.log(user);
       if (!user) {
         return done(null, false, { message: "Incorrect Credentials" });
       }
@@ -44,118 +59,16 @@ app.post("/login", async (req, res) => {
     }
   })(req, res);
 });
-//
-// const passport = require("passport");
-// const LocalStrategy = require("passport-local").Strategy;
-// const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
-
-// const JWT_SECRET = process.env.JWT_SECRET;
-
-// // Configure passport local strategy
-// passport.use(
-//   new LocalStrategy(
-//     {
-//       usernameField: "email", // if using email instead of username
-//       passwordField: "password",
-//     },
-//     async (email, password, done) => {
-//       try {
-//         // Find user by email
-//         const user = await User.findOne({ email });
-
-//         // User not found
-//         if (!user) {
-//           return done(null, false, { message: "Invalid credentials" });
-//         }
-
-//         // Check password
-//         const isMatch = await bcrypt.compare(password, user.password);
-//         if (!isMatch) {
-//           return done(null, false, { message: "Invalid credentials" });
-//         }
-
-//         // Remove password from user object
-//         const userObject = user.toJSON();
-//         delete userObject.password;
-
-//         return done(null, userObject);
-//       } catch (error) {
-//         return done(error);
-//       }
-//     }
-//   )
-// );
-
-// // Login endpoint
-// const login = async (req, res) => {
-//   passport.authenticate("local", { session: false }, (err, user, info) => {
-//     if (err) {
-//       return res.status(500).json({
-//         success: false,
-//         message: "An error occurred during authentication",
-//       });
-//     }
-
-//     if (!user) {
-//       return res.status(401).json({
-//         success: false,
-//         message: info.message || "Authentication failed",
-//       });
-//     }
-
-//     const token = jwt.sign(
-//       {
-//         id: user._id,
-//         email: user.email,
-//       },
-//       JWT_SECRET,
-//       { expiresIn: "1d" }
-//     );
-
-//     res.json({
-//       success: true,
-//       token,
-//       user,
-//     });
-//   })(req, res);
-// };
-
-// // Auth middleware for protected routes
-// const auth = async (req, res, next) => {
-//   try {
-//     const token = req.header("Authorization")?.replace("Bearer ", "");
-
-//     if (!token) {
-//       return res.status(401).json({
-//         success: false,
-//         message: "No token provided",
-//       });
-//     }
-
-//     const decoded = jwt.verify(token, JWT_SECRET);
-//     req.user = decoded;
-//     next();
-//   } catch (error) {
-//     res.status(401).json({
-//       success: false,
-//       message: "Invalid or expired token",
-//     });
-//   }
-// };
-
-// // Example usage
-// app.post("/auth/login", login);
-
-// // Protected route example
-// app.get("/protected", auth, (req, res) => {
-//   res.json({
-//     success: true,
-//     data: "Protected data",
-//     user: req.user,
-//   });
-// });
-//
+//add protected route
+app.get(
+  "/protected",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.json({
+      message: "Protected route",
+    });
+  }
+);
 //Routers here
 app.use("/posts", postsRouter);
 app.use("/comments", commentsRouter);
