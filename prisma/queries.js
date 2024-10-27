@@ -147,7 +147,6 @@ const getUser = async (username) => {
         username,
       },
     });
-    console.log(user);
     return user;
   } catch (error) {
     console.error(error);
