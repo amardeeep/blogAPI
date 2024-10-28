@@ -10,4 +10,4 @@ signupRouter.post(
     res.send("User created");
   })
 );
-module.exports = { signupRouter };
+module.exports = signupRouter;

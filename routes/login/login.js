@@ -13,4 +13,4 @@ loginRouter.post("/login", async (req, res) => {
     }
   })(req, res);
 });
-module.exports = { loginRouter };
+module.exports = loginRouter;

@@ -65,4 +65,4 @@ postsRouter.put(
     res.send("Post Updated");
   })
 );
-module.exports = { postsRouter };
+module.exports = postsRouter;
