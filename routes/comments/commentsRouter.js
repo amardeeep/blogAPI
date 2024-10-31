@@ -24,6 +24,15 @@ commentsRouter.delete(
     res.send("Comment Deleted");
   })
 );
+//delete all comments
+commentsRouter.delete(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  asyncHandler(async (req, res) => {
+    await queries.deleteAllComments();
+    res.send("All Comments Deleted");
+  })
+);
 //update a comment
 commentsRouter.put(
   "/:commentid",

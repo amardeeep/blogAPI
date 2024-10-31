@@ -65,4 +65,13 @@ postsRouter.put(
     res.send("Post Updated");
   })
 );
+//delete all posts
+postsRouter.delete(
+  "/",
+  asyncHandler(async (req, res) => {
+    await queries.deleteAllPosts;
+    res.send("All Posts Deleted");
+  })
+);
+
 module.exports = postsRouter;

@@ -152,7 +152,22 @@ const getUser = async (username) => {
     console.error(error);
   }
 };
-
+//delete all posts
+const deleteAllPosts = async () => {
+  try {
+    await prisma.post.deleteMany();
+  } catch (err) {
+    console.error(err);
+  }
+};
+//delete all comments
+const deleteAllComments = async () => {
+  try {
+    await prisma.comment.deleteMany();
+  } catch (error) {
+    console.error(error);
+  }
+};
 module.exports = {
   postPosts,
   getPosts,
@@ -167,4 +182,6 @@ module.exports = {
   updateComment,
   createUser,
   getUser,
+  deleteAllPosts,
+  deleteAllComments,
 };
